@@ -1,4 +1,5 @@
 using AspMvcBiblio.Data;
+using AspMvcBiblio.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<BiblioContext>(options=>options.UseSqlServer(builder.Configuration.GetConnectionString("localConnection")));
-
+builder.Services.AddSeedwork();
 
 var app = builder.Build();
 
