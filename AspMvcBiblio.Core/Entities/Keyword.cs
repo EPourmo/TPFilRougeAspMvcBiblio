@@ -9,7 +9,6 @@ namespace AspMvcBiblio.Entities
 {
 	public class Keyword : Entity
 	{
-
 		public string Word { get; set; } = null!;
 
 	}

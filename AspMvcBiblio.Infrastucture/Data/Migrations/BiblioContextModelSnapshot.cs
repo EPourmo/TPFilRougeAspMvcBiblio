@@ -22,7 +22,7 @@ namespace AspMvcBiblio.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("AspMvcBiblio.Entities.Entity", b =>
+            modelBuilder.Entity("AspMvcBiblio.Entities.Author", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -30,35 +30,34 @@ namespace AspMvcBiblio.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Discriminator")
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Entity");
+                    b.ToTable("Authors");
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Entity");
-                });
-
-            modelBuilder.Entity("BookTheme", b =>
-                {
-                    b.Property<int>("BooksId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ThemesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BooksId", "ThemesId");
-
-                    b.HasIndex("ThemesId");
-
-                    b.ToTable("BookTheme");
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            FirstName = "Jane",
+                            LastName = "Austen"
+                        });
                 });
 
             modelBuilder.Entity("AspMvcBiblio.Entities.AuthorBook", b =>
                 {
-                    b.HasBaseType("AspMvcBiblio.Entities.Entity");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("AuthorId")
                         .HasColumnType("int");
@@ -66,16 +65,30 @@ namespace AspMvcBiblio.Data.Migrations
                     b.Property<int>("BookId")
                         .HasColumnType("int");
 
+                    b.HasKey("Id");
+
                     b.HasIndex("AuthorId");
 
                     b.HasIndex("BookId");
 
-                    b.HasDiscriminator().HasValue("AuthorBook");
+                    b.ToTable("AuthorBooks");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AuthorId = 1,
+                            BookId = 1
+                        });
                 });
 
             modelBuilder.Entity("AspMvcBiblio.Entities.Book", b =>
                 {
-                    b.HasBaseType("AspMvcBiblio.Entities.Entity");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("CopiesNumber")
                         .HasColumnType("int");
@@ -94,47 +107,51 @@ namespace AspMvcBiblio.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasDiscriminator().HasValue("Book");
+                    b.HasKey("Id");
+
+                    b.ToTable("Books");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CopiesNumber = 1,
+                            ISBN = "2-7654-1005-4",
+                            ServiceDate = new DateTime(2012, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "Orgueil et Préjugés"
+                        });
                 });
 
             modelBuilder.Entity("AspMvcBiblio.Entities.Keyword", b =>
                 {
-                    b.HasBaseType("AspMvcBiblio.Entities.Entity");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int?>("BookId")
-                        .HasColumnType("int")
-                        .HasColumnName("Keyword_BookId");
+                        .HasColumnType("int");
 
                     b.Property<string>("Word")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.HasKey("Id");
+
                     b.HasIndex("BookId");
 
-                    b.HasDiscriminator().HasValue("Keyword");
-                });
-
-            modelBuilder.Entity("AspMvcBiblio.Entities.Person", b =>
-                {
-                    b.HasBaseType("AspMvcBiblio.Entities.Entity");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasDiscriminator().HasValue("Person");
+                    b.ToTable("KeyWords");
                 });
 
             modelBuilder.Entity("AspMvcBiblio.Entities.Theme", b =>
                 {
-                    b.HasBaseType("AspMvcBiblio.Entities.Entity");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Description")
                         .HasMaxLength(200)
@@ -145,29 +162,24 @@ namespace AspMvcBiblio.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasDiscriminator().HasValue("Theme");
-                });
+                    b.HasKey("Id");
 
-            modelBuilder.Entity("AspMvcBiblio.Entities.Author", b =>
-                {
-                    b.HasBaseType("AspMvcBiblio.Entities.Person");
-
-                    b.HasDiscriminator().HasValue("Author");
+                    b.ToTable("Themes");
                 });
 
             modelBuilder.Entity("BookTheme", b =>
                 {
-                    b.HasOne("AspMvcBiblio.Entities.Book", null)
-                        .WithMany()
-                        .HasForeignKey("BooksId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("BooksId")
+                        .HasColumnType("int");
 
-                    b.HasOne("AspMvcBiblio.Entities.Theme", null)
-                        .WithMany()
-                        .HasForeignKey("ThemesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("ThemesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BooksId", "ThemesId");
+
+                    b.HasIndex("ThemesId");
+
+                    b.ToTable("BookTheme");
                 });
 
             modelBuilder.Entity("AspMvcBiblio.Entities.AuthorBook", b =>
@@ -196,16 +208,31 @@ namespace AspMvcBiblio.Data.Migrations
                         .HasForeignKey("BookId");
                 });
 
-            modelBuilder.Entity("AspMvcBiblio.Entities.Book", b =>
+            modelBuilder.Entity("BookTheme", b =>
                 {
-                    b.Navigation("AuthorBooks");
+                    b.HasOne("AspMvcBiblio.Entities.Book", null)
+                        .WithMany()
+                        .HasForeignKey("BooksId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("KeyWords");
+                    b.HasOne("AspMvcBiblio.Entities.Theme", null)
+                        .WithMany()
+                        .HasForeignKey("ThemesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AspMvcBiblio.Entities.Author", b =>
                 {
                     b.Navigation("AuthorBooks");
+                });
+
+            modelBuilder.Entity("AspMvcBiblio.Entities.Book", b =>
+                {
+                    b.Navigation("AuthorBooks");
+
+                    b.Navigation("KeyWords");
                 });
 #pragma warning restore 612, 618
         }

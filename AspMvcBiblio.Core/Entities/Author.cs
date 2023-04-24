@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace AspMvcBiblio.Entities
 {
-    public class Author : Person
+    public class Author : Entity
     {
+        public string LastName { get; set; } = null!;
+        public string FirstName { get; set; } = null!;
         public List<AuthorBook> AuthorBooks { get; } = new();
-
-	}
+    }
 }

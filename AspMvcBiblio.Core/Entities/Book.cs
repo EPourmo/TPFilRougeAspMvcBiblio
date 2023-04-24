@@ -13,7 +13,7 @@ namespace AspMvcBiblio.Entities
 		public string Title { get; set; } = null!;
 		public List<AuthorBook> AuthorBooks { get; } = new();
 
-		readonly List<Keyword> _keyWords = new List<Keyword>();
+        readonly List<Keyword> _keyWords = new List<Keyword>();
 
 		public IReadOnlyCollection<Keyword> KeyWords => _keyWords.AsReadOnly();
 
@@ -21,7 +21,6 @@ namespace AspMvcBiblio.Entities
 		public IReadOnlyCollection<Theme> Themes => _themes.AsReadOnly();
 		public int CopiesNumber { get; set; }
 		public DateTime ServiceDate { get; set; }
-
 
 	}
 }
