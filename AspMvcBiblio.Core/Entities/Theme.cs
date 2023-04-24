@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AspMvcBiblio.Core.Entities
+namespace AspMvcBiblio.Entities
 {
-    public class Theme
+    public class Theme : Entity
     {
 
         public string DomainName { get; set; } = null!;

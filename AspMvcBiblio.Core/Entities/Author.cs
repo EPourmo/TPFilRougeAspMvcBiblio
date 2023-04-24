@@ -4,13 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AspMvcBiblio.Core.Entities
+namespace AspMvcBiblio.Entities
 {
-    public class Author :Person
+    public class Author : Entity
     {
-        readonly List<Book> _books=new List<Book>();
-
-        public IReadOnlyCollection<Book> Books => _books.AsReadOnly();
-
+        public string LastName { get; set; } = null!;
+        public string FirstName { get; set; } = null!;
+        public List<AuthorBook> AuthorBooks { get; } = new();
     }
 }

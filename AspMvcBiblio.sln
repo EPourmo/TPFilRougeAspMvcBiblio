@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspMvcBiblio", "AspMvcBiblio\AspMvcBiblio.csproj", "{AFF81192-4615-4939-83E3-5FD8620DF7FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspMvcBiblio", "AspMvcBiblio\AspMvcBiblio.csproj", "{AFF81192-4615-4939-83E3-5FD8620DF7FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspMvcBiblio.Core", "AspMvcBiblio.Core\AspMvcBiblio.Core.csproj", "{56C1810B-FEE7-4E3E-B4AA-469E3B277B49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspMvcBiblio.Core", "AspMvcBiblio.Core\AspMvcBiblio.Core.csproj", "{56C1810B-FEE7-4E3E-B4AA-469E3B277B49}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspMvcBiblio.Infrastucture", "AspMvcBiblio.Infrastucture\AspMvcBiblio.Infrastucture.csproj", "{8AE4D5A5-0A92-4D0A-A76D-493F1F62EB29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspMvcBiblio.Infrastructure", "AspMvcBiblio.Infrastucture\AspMvcBiblio.Infrastructure.csproj", "{8AE4D5A5-0A92-4D0A-A76D-493F1F62EB29}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspMvcBiblio.Tests", "AspMvcBiblio.Tests\AspMvcBiblio.Tests.csproj", "{18BBB17C-01B1-4201-84C8-CB3393A8426F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspMvcBiblio.Tests", "AspMvcBiblio.Tests\AspMvcBiblio.Tests.csproj", "{18BBB17C-01B1-4201-84C8-CB3393A8426F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
