@@ -4,6 +4,12 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>AspMvcBiblio</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AspMvcBiblio.Core\AspMvcBiblio.Core.csproj" />
+    <ProjectReference Include="..\AspMvcBiblio.Infrastucture\AspMvcBiblio.Infrastucture.csproj" />
+  </ItemGroup>
 
 </Project>
