@@ -1,0 +1,1 @@
+﻿add-Migration BibliothequeVersion1 -Context BiblioContext -StartupProject AspMvcBiblio -Project AspMvcBiblio.Infrastructure -OutputDir Data\Migrations
