@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace AspMvcBiblio.Entities
 {
-    public class Author :Person
+    public class Author : Person
     {
-        readonly List<Book> _books=new List<Book>();
+        public List<AuthorBook> AuthorBooks { get; } = new();
 
-        public IReadOnlyCollection<Book> Books => _books.AsReadOnly();
-
-    }
+	}
 }

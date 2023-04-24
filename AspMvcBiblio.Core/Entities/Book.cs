@@ -11,9 +11,7 @@ namespace AspMvcBiblio.Entities
 	{
 		public string ISBN { get; set; } = null!;
 		public string Title { get; set; } = null!;
-
-		readonly List<Author> _authors = new List<Author>();
-		public IReadOnlyCollection<Author> Authors => _authors.AsReadOnly();
+		public List<AuthorBook> AuthorBooks { get; } = new();
 
 		readonly List<Keyword> _keyWords = new List<Keyword>();
 

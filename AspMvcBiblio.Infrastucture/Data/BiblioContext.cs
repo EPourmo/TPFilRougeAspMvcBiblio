@@ -20,6 +20,7 @@ namespace AspMvcBiblio.Data
 
 		public DbSet<Keyword> KeyWords => Set<Keyword>();
 
+		public DbSet<AuthorBook> AuthorBooks => Set<AuthorBook>();
 
 
 
@@ -30,12 +31,12 @@ namespace AspMvcBiblio.Data
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-
+			//Entity
 			modelBuilder.Entity<Entity>()
 				.Property(p => p.Id)
 				.IsRequired();
 
-
+			//Person
 			modelBuilder.Entity<Person>()
 				.Property(a => a.LastName)
 				.IsRequired()
@@ -47,6 +48,8 @@ namespace AspMvcBiblio.Data
 			   .IsRequired()
 			   .HasMaxLength(50);
 
+
+			//Book
 			modelBuilder.Entity<Book>()
 			   .Property(b => b.ISBN)
 			   .IsRequired()
@@ -62,23 +65,31 @@ namespace AspMvcBiblio.Data
 			   .HasDefaultValueSql("getdate()");
 
 
-
+			//Theme		
 			modelBuilder.Entity<Theme>()
 				.Property(t => t.DomainName)
 				.IsRequired()
 				.HasMaxLength(50);
 
-
 			modelBuilder.Entity<Theme>()
 				.Property(t => t.Description)
 				.HasMaxLength(200);
 
-			
 
+			//Keyword
 			modelBuilder.Entity<Keyword>()
 				.Property(k=>k.Word)
 				.IsRequired()
 				.HasMaxLength(50);
+
+			//AuhtorBook
+			modelBuilder.Entity<AuthorBook>()
+				.Property(b => b.AuthorId)
+				.IsRequired();
+
+			modelBuilder.Entity<AuthorBook>()
+				.Property(b => b.BookId)
+				.IsRequired();
 
 
 			//modelBuilder.Entity<Theme>().HasData(
@@ -91,12 +102,11 @@ namespace AspMvcBiblio.Data
 
 			//modelBuilder.Entity<Book>().HasData(
 			//	new Book {
-
 			//		ISBN = "2-7654-1005-4",
 			//				CopiesNumber=1,
 			//				ServiceDate=DateTime.Parse("2012-09-01"),
 			//				Title= "Orgueil et Préjugés",
-							
+
 			//	}
 			//	);
 

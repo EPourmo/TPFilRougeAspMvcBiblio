@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<BiblioContext>(options=>options.UseSqlServer(builder.Configuration.GetConnectionString("localConnection")));
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
