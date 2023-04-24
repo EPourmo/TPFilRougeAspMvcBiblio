@@ -25,3 +25,11 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+
+
+
+
+/*
+public string Mail { get; set; } = null!;
+public string Phone { get; set; } = null!; */
