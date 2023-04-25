@@ -11,14 +11,15 @@ namespace AspMvcBiblio.Entities
 	{
 		public string ISBN { get; set; } = null!;
 		public string Title { get; set; } = null!;
-		public List<AuthorBook> AuthorBooks { get; } = new();
 
-        readonly List<Keyword> _keyWords = new List<Keyword>();
+		readonly List<Author> _authors = new List<Author>();
+		public ICollection<Author> Authors => _authors;
 
-		public IReadOnlyCollection<Keyword> KeyWords => _keyWords.AsReadOnly();
+		readonly List<Keyword> _keyWords = new List<Keyword>();
+		public ICollection<Keyword> KeyWords => _keyWords;
 
 		readonly List<Theme> _themes = new List<Theme>();
-		public IReadOnlyCollection<Theme> Themes => _themes.AsReadOnly();
+		public ICollection<Theme> Themes => _themes;
 		public int CopiesNumber { get; set; }
 		public DateTime ServiceDate { get; set; }
 

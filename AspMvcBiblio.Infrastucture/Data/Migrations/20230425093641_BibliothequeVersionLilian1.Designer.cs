@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AspMvcBiblio.Data.Migrations
 {
     [DbContext(typeof(BiblioContext))]
-    [Migration("20230424135123_BibliothequeVersionV1")]
-    partial class BibliothequeVersionV1
+    [Migration("20230425093641_BibliothequeVersionLilian1")]
+    partial class BibliothequeVersionLilian1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -50,37 +50,6 @@ namespace AspMvcBiblio.Data.Migrations
                             Id = 1,
                             FirstName = "Jane",
                             LastName = "Austen"
-                        });
-                });
-
-            modelBuilder.Entity("AspMvcBiblio.Entities.AuthorBook", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AuthorId");
-
-                    b.HasIndex("BookId");
-
-                    b.ToTable("AuthorBooks");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AuthorId = 1,
-                            BookId = 1
                         });
                 });
 
@@ -145,6 +114,13 @@ namespace AspMvcBiblio.Data.Migrations
                     b.HasIndex("BookId");
 
                     b.ToTable("KeyWords");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Word = "mariage"
+                        });
                 });
 
             modelBuilder.Entity("AspMvcBiblio.Entities.Theme", b =>
@@ -156,8 +132,8 @@ namespace AspMvcBiblio.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Description")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<string>("DomainName")
                         .IsRequired()
@@ -167,6 +143,59 @@ namespace AspMvcBiblio.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Themes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Les livres de suspense sont des thrillers qui tiennent les lecteurs en haleine jusqu'à la fin. Ils ont souvent des intrigues complexes, des personnages intrigants et des rebondissements inattendus. \"Gone Girl\" de Gillian Flynn est un exemple de livre de suspense qui raconte l'histoire d'un mari qui devient le suspect principal dans la disparition de sa femme",
+                            DomainName = "Suspense "
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Les biographies sont des livres qui racontent la vie d'une personne réelle. Ils peuvent se concentrer sur la vie entière de la personne ou sur une période spécifique de sa vie. Les biographies sont souvent utilisées pour en apprendre davantage sur des personnalités célèbres telles que des musiciens, des acteurs ou des politiciens. \"Steve Jobs\" de Walter Isaacson est un exemple de biographie bien connue.",
+                            DomainName = "Biographie "
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Les livres de fantasy sont des histoires qui se déroulent dans des mondes imaginaires remplis de magie et de créatures fantastiques. Ils peuvent se concentrer sur des aventures, des quêtes ou des batailles épiques. \"Le Seigneur des Anneaux\" de J.R.R. Tolkien est un exemple bien connu de livre de fantasy.",
+                            DomainName = "Fantasy"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Les livres de romance sont des histoires d'amour passionnantes et souvent dramatiques. Ils peuvent se concentrer sur des relations amoureuses, des triangles amoureux et des obstacles à surmonter. \"Orgueil et Préjugés\" de Jane Austen est un exemple classique de livre de romance.",
+                            DomainName = "Romance "
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "Les livres policiers sont des histoires qui se concentrent sur les enquêtes et les résolutions de crimes. Les auteurs de livres policiers doivent créer des intrigues compliquées et des personnages convaincants pour garder les lecteurs captivés. \"Le Silence des Agneaux\" de Thomas Harris est un exemple célèbre de livre policier.",
+                            DomainName = "Policier "
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Description = "Les autobiographies sont des livres qui racontent la vie d'une personne écrite par elle-même. Ils peuvent se concentrer sur des moments clés de la vie de l'auteur, des leçons apprises ou des défis surmontés. \"Born a Crime\" de Trevor Noah est un exemple récent de livre autobiographique qui raconte l'histoire de l'humoriste et présentateur sud-africain.",
+                            DomainName = "Autobiographie "
+                        });
+                });
+
+            modelBuilder.Entity("AuthorBook", b =>
+                {
+                    b.Property<int>("AuthorsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BooksId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AuthorsId", "BooksId");
+
+                    b.HasIndex("BooksId");
+
+                    b.ToTable("AuthorBook");
                 });
 
             modelBuilder.Entity("BookTheme", b =>
@@ -184,30 +213,26 @@ namespace AspMvcBiblio.Data.Migrations
                     b.ToTable("BookTheme");
                 });
 
-            modelBuilder.Entity("AspMvcBiblio.Entities.AuthorBook", b =>
-                {
-                    b.HasOne("AspMvcBiblio.Entities.Author", "Author")
-                        .WithMany("AuthorBooks")
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AspMvcBiblio.Entities.Book", "Book")
-                        .WithMany("AuthorBooks")
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Author");
-
-                    b.Navigation("Book");
-                });
-
             modelBuilder.Entity("AspMvcBiblio.Entities.Keyword", b =>
                 {
                     b.HasOne("AspMvcBiblio.Entities.Book", null)
                         .WithMany("KeyWords")
                         .HasForeignKey("BookId");
+                });
+
+            modelBuilder.Entity("AuthorBook", b =>
+                {
+                    b.HasOne("AspMvcBiblio.Entities.Author", null)
+                        .WithMany()
+                        .HasForeignKey("AuthorsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AspMvcBiblio.Entities.Book", null)
+                        .WithMany()
+                        .HasForeignKey("BooksId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BookTheme", b =>
@@ -225,15 +250,8 @@ namespace AspMvcBiblio.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("AspMvcBiblio.Entities.Author", b =>
-                {
-                    b.Navigation("AuthorBooks");
-                });
-
             modelBuilder.Entity("AspMvcBiblio.Entities.Book", b =>
                 {
-                    b.Navigation("AuthorBooks");
-
                     b.Navigation("KeyWords");
                 });
 #pragma warning restore 612, 618

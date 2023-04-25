@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AspMvcBiblio.Data.Migrations
 {
-    public partial class BibliothequeVersionV1 : Migration
+    public partial class BibliothequeVersionLilian1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -46,7 +46,7 @@ namespace AspMvcBiblio.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DomainName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true)
+                    Description = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -54,26 +54,24 @@ namespace AspMvcBiblio.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AuthorBooks",
+                name: "AuthorBook",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AuthorId = table.Column<int>(type: "int", nullable: false),
-                    BookId = table.Column<int>(type: "int", nullable: false)
+                    AuthorsId = table.Column<int>(type: "int", nullable: false),
+                    BooksId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AuthorBooks", x => x.Id);
+                    table.PrimaryKey("PK_AuthorBook", x => new { x.AuthorsId, x.BooksId });
                     table.ForeignKey(
-                        name: "FK_AuthorBooks_Authors_AuthorId",
-                        column: x => x.AuthorId,
+                        name: "FK_AuthorBook_Authors_AuthorsId",
+                        column: x => x.AuthorsId,
                         principalTable: "Authors",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AuthorBooks_Books_BookId",
-                        column: x => x.BookId,
+                        name: "FK_AuthorBook_Books_BooksId",
+                        column: x => x.BooksId,
                         principalTable: "Books",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -133,19 +131,27 @@ namespace AspMvcBiblio.Data.Migrations
                 values: new object[] { 1, 1, "2-7654-1005-4", new DateTime(2012, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Orgueil et Préjugés" });
 
             migrationBuilder.InsertData(
-                table: "AuthorBooks",
-                columns: new[] { "Id", "AuthorId", "BookId" },
-                values: new object[] { 1, 1, 1 });
+                table: "KeyWords",
+                columns: new[] { "Id", "BookId", "Word" },
+                values: new object[] { 1, null, "mariage" });
+
+            migrationBuilder.InsertData(
+                table: "Themes",
+                columns: new[] { "Id", "Description", "DomainName" },
+                values: new object[,]
+                {
+                    { 1, "Les livres de suspense sont des thrillers qui tiennent les lecteurs en haleine jusqu'à la fin. Ils ont souvent des intrigues complexes, des personnages intrigants et des rebondissements inattendus. \"Gone Girl\" de Gillian Flynn est un exemple de livre de suspense qui raconte l'histoire d'un mari qui devient le suspect principal dans la disparition de sa femme", "Suspense " },
+                    { 2, "Les biographies sont des livres qui racontent la vie d'une personne réelle. Ils peuvent se concentrer sur la vie entière de la personne ou sur une période spécifique de sa vie. Les biographies sont souvent utilisées pour en apprendre davantage sur des personnalités célèbres telles que des musiciens, des acteurs ou des politiciens. \"Steve Jobs\" de Walter Isaacson est un exemple de biographie bien connue.", "Biographie " },
+                    { 3, "Les livres de fantasy sont des histoires qui se déroulent dans des mondes imaginaires remplis de magie et de créatures fantastiques. Ils peuvent se concentrer sur des aventures, des quêtes ou des batailles épiques. \"Le Seigneur des Anneaux\" de J.R.R. Tolkien est un exemple bien connu de livre de fantasy.", "Fantasy" },
+                    { 4, "Les livres de romance sont des histoires d'amour passionnantes et souvent dramatiques. Ils peuvent se concentrer sur des relations amoureuses, des triangles amoureux et des obstacles à surmonter. \"Orgueil et Préjugés\" de Jane Austen est un exemple classique de livre de romance.", "Romance " },
+                    { 5, "Les livres policiers sont des histoires qui se concentrent sur les enquêtes et les résolutions de crimes. Les auteurs de livres policiers doivent créer des intrigues compliquées et des personnages convaincants pour garder les lecteurs captivés. \"Le Silence des Agneaux\" de Thomas Harris est un exemple célèbre de livre policier.", "Policier " },
+                    { 6, "Les autobiographies sont des livres qui racontent la vie d'une personne écrite par elle-même. Ils peuvent se concentrer sur des moments clés de la vie de l'auteur, des leçons apprises ou des défis surmontés. \"Born a Crime\" de Trevor Noah est un exemple récent de livre autobiographique qui raconte l'histoire de l'humoriste et présentateur sud-africain.", "Autobiographie " }
+                });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AuthorBooks_AuthorId",
-                table: "AuthorBooks",
-                column: "AuthorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AuthorBooks_BookId",
-                table: "AuthorBooks",
-                column: "BookId");
+                name: "IX_AuthorBook_BooksId",
+                table: "AuthorBook",
+                column: "BooksId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BookTheme_ThemesId",
@@ -161,7 +167,7 @@ namespace AspMvcBiblio.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AuthorBooks");
+                name: "AuthorBook");
 
             migrationBuilder.DropTable(
                 name: "BookTheme");

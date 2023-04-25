@@ -1,4 +1,4 @@
-﻿@model AspMvcBiblio.Entities.Book
+﻿@model AspMvcBiblio.Models.BookCreateModel
 
 @{
     ViewData["Title"] = "Create";
@@ -22,10 +22,11 @@
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="CopiesNumber" class="control-label"></label>
-                <input asp-for="CopiesNumber" class="form-control" />
-                <span asp-validation-for="CopiesNumber" class="text-danger"></span>
+                <label asp-for="AuthorId" class="control-label"></label>
+                <select asp-for="AuthorId" asp-items="@(ViewData["Authors"] as SelectList)"   class="form-control" >
+                </select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

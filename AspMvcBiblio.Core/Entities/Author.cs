@@ -10,6 +10,11 @@ namespace AspMvcBiblio.Entities
     {
         public string LastName { get; set; } = null!;
         public string FirstName { get; set; } = null!;
-        public List<AuthorBook> AuthorBooks { get; } = new();
-    }
+
+        public string FullName => $"{LastName},{FirstName}";
+
+        readonly List<Book> _books = new List<Book>();
+		public IReadOnlyCollection<Book> Books => _books.AsReadOnly();
+
+	}
 }

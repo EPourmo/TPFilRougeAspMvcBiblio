@@ -7,16 +7,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AspMvcBiblio.Data;
 using AspMvcBiblio.Entities;
+using AspMvcBiblio.Models;
 
 namespace AspMvcBiblio.Controllers
 {
     public class BooksController : Controller
     {
-        private IRepository<Book> _repository;
+        private readonly IBookRepository _repository;
+        private readonly IAuthorRepository _authorRepository;
 
-        public BooksController(IRepository<Book> repository)
+        public BooksController(IBookRepository repository, IAuthorRepository authorRepository)
         {
             _repository = repository;
+            _authorRepository = authorRepository;
         }
 
         // GET: Books
@@ -44,8 +47,9 @@ namespace AspMvcBiblio.Controllers
         }
 
         // GET: Books/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewData["Authors"] = new SelectList(await _authorRepository.ListAll(), nameof(Author.Id), nameof(Author.FullName));
             return View();
         }
 
@@ -54,14 +58,28 @@ namespace AspMvcBiblio.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Book book)
+        public async Task<IActionResult> Create(BookCreateModel model)
         {
+
             if (ModelState.IsValid)
             {
-                await _repository.Insert(book);
+                var author = await _authorRepository.GetById(model.AuthorId);
+                if (author == null)
+                { return NotFound(); }
+
+                var newbook = new Book()
+                {
+                    ISBN = model.ISBN!,
+                    Title = model.Title!
+                };
+
+                newbook.Authors.Add(author);
+
+                await _repository.Insert(newbook);
+
                 return RedirectToAction(nameof(Index));
             }
-            return View(book);
+            return View(model);
         }
 
         // GET: Books/Edit/5
@@ -148,5 +166,8 @@ namespace AspMvcBiblio.Controllers
         {
             return await _repository.GetById(id) != null;
         }
+
+
+
     }
 }

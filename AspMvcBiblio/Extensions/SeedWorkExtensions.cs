@@ -9,7 +9,16 @@ namespace AspMvcBiblio.Extensions
             services.AddScoped(
                 typeof(IRepository<>),
                 typeof(Repository<>));
-            return services;
+
+			services.AddScoped(
+				typeof(IBookRepository),
+				typeof(BookRepository));
+
+			services.AddScoped(
+				typeof(IAuthorRepository),
+				typeof(AuthorRepository));
+
+			return services;
         }
     }
 }
