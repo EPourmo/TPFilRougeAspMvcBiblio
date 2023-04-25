@@ -63,7 +63,7 @@
 					@Html.DisplayFor(modelItem => item.Themes)
 				</td>
 				<td>
-					@Html.DisplayFor(modelItem => item.Authors)
+					@Html.DisplayFor(modelItem => item.Authors.FirstOrDefault().FullName)
 				</td>
 				<td>
 					<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

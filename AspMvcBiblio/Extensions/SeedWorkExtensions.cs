@@ -17,7 +17,12 @@ namespace AspMvcBiblio.Extensions
 			services.AddScoped(
 				typeof(IAuthorRepository),
 				typeof(AuthorRepository));
-
+            services.AddScoped(
+                typeof(IThemeRepository),
+                typeof(ThemeRepository));
+			services.AddScoped(
+				typeof(IKeywordRepository),
+				typeof(KeywordRepository));
 			return services;
         }
     }

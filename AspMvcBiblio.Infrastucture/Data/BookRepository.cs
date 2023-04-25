@@ -30,7 +30,6 @@ namespace AspMvcBiblio.Data
 		}
 
 
-
 		public async Task<Book?> GetSingle(Expression<Func<Book, bool>> criteria)
 		{
 			return await _context.Books

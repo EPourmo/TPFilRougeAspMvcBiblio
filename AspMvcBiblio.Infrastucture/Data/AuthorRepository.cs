@@ -18,8 +18,6 @@ namespace AspMvcBiblio.Data
 			_context = context;
 		}
 
-
-
 		public async Task<Author?> GetById(int id)
 		{
 			return await _context.Authors

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AspMvcBiblio.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace AspMvcBiblio.Models
 {
@@ -10,11 +11,12 @@ namespace AspMvcBiblio.Models
 
         [Required]
         [StringLength(100)]
-        public string? Title { get; set; } 
+        public string? Title { get; set; }
 
-
+        public int CopiesNumber { get; set; }
         public int AuthorId { get; set; }
 
-
+        public int ThemeId { get; set; }
+        public int KeywordId { get; set; }
     }
 }
