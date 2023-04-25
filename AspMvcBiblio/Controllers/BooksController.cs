@@ -167,7 +167,11 @@ namespace AspMvcBiblio.Controllers
             return await _repository.GetById(id) != null;
         }
 
-
+        public async Task<IActionResult> Search(string query)
+        {
+            var books = await _repository.Search(query);
+            return View("Index", books);
+        }
 
     }
 }

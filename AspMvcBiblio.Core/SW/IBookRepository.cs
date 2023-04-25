@@ -12,7 +12,8 @@ namespace AspMvcBiblio.Data
 		Task<IEnumerable<Book>> List(Expression<Func<Book, bool>> criteria);
 		Task<IEnumerable<Book>> ListAll();
 		Task Update(Book entity);
+        Task<IEnumerable<Book>> Search(string query);
 
-	
-	}
+
+    }
 }

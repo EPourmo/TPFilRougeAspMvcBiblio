@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -80,7 +82,26 @@ namespace AspMvcBiblio.Data
 			await _context.SaveChangesAsync();
 		}
 
+		public async Task<IEnumerable<Book>> Search (string query)
+		{
+            var books = _context.Books
+				.Include(b => b.Authors)
+				.Include(b => b.KeyWords)
+				.Include(b => b.Themes)
+				.AsQueryable();
 
+            if (!string.IsNullOrEmpty(query))
+            {
+                books = books.Where(b => b.Title.Contains(query) //||
+                                         //b.Authors.FirstOrDefault().FullName.Contains(query) //||
+                                         //b.KeyWords.Any(k => k.Word.Contains(query)) ||
+                                         //b.Themes.FirstOrDefault().DomainName.Contains(query)
+										 );
+            }
+
+            return await books.ToListAsync();
+
+        }
 
 	}
 }
