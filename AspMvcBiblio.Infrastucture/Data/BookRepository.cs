@@ -13,97 +13,97 @@ using System.Xml.Linq;
 
 namespace AspMvcBiblio.Data
 {
-	public class BookRepository : IBookRepository
-	{
-		BiblioContext _context { get; }
-		public BookRepository(BiblioContext context)
-		{
-			_context = context;
-		}
+    public class BookRepository : IBookRepository
+    {
+        BiblioContext _context { get; }
+        public BookRepository(BiblioContext context)
+        {
+            _context = context;
+        }
 
-		public async Task<Book?> GetById(int id)
-		{
-		
-			return await _context.Books
-			.Include(a => a.Authors)
-			.Include(b => b.KeyWords)
-			.Include(b => b.Themes)
-			.FirstOrDefaultAsync(b => b.Id == id);
-		}
+        public async Task<Book?> GetById(int id)
+        {
 
-
-
-		public async Task<Book?> GetSingle(Expression<Func<Book, bool>> criteria)
-		{
-			return await _context.Books
-			.Include(a => a.Authors)
-			.Include(b => b.KeyWords)
-			.Include(b => b.Themes)
-			.SingleOrDefaultAsync(criteria);
-		}
+            return await _context.Books
+            .Include(a => a.Authors)
+            .Include(b => b.KeyWords)
+            .Include(b => b.Themes)
+            .FirstOrDefaultAsync(b => b.Id == id);
+        }
 
 
 
-		public async Task<IEnumerable<Book>> ListAll()
-		{
-			return await _context.Books.Include(a => a.Authors).Include(b => b.KeyWords)
+        public async Task<Book?> GetSingle(Expression<Func<Book, bool>> criteria)
+        {
+            return await _context.Books
+            .Include(a => a.Authors)
+            .Include(b => b.KeyWords)
+            .Include(b => b.Themes)
+            .SingleOrDefaultAsync(criteria);
+        }
+
+
+
+        public async Task<IEnumerable<Book>> ListAll()
+        {
+            return await _context.Books.Include(a => a.Authors).Include(b => b.KeyWords)
             .Include(b => b.Themes).ToListAsync();
-		}
+        }
 
 
 
-		public async Task<IEnumerable<Book>> List(Expression<Func<Book, bool>> criteria)
-		{
-			return await _context.Books
-			.Include(a => a.Authors)
-			.Include(b => b.KeyWords)
-			.Include(b => b.Themes).Where(criteria).ToListAsync();
-		}
+        public async Task<IEnumerable<Book>> List(Expression<Func<Book, bool>> criteria)
+        {
+            return await _context.Books
+            .Include(a => a.Authors)
+            .Include(b => b.KeyWords)
+            .Include(b => b.Themes).Where(criteria).ToListAsync();
+        }
 
 
 
-		public async Task<Book> Insert(Book entity)
-		{
-			_context.Books.Add(entity);
-			await _context.SaveChangesAsync();
-			return entity;
-		}
-		public async Task Update(Book entity)
-		{
-			_context.Books.Update(entity);
-			await _context.SaveChangesAsync();
-		}
+        public async Task<Book> Insert(Book entity)
+        {
+            _context.Books.Add(entity);
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+        public async Task Update(Book entity)
+        {
+            _context.Books.Update(entity);
+            await _context.SaveChangesAsync();
+        }
 
 
 
-		public async Task Delete(Book entity)
-		{
-			_context.Books.Remove(entity);
-			await _context.SaveChangesAsync();
-		}
+        public async Task Delete(Book entity)
+        {
+            _context.Books.Remove(entity);
+            await _context.SaveChangesAsync();
+        }
 
-		public async Task<IEnumerable<Book>> Search (string query)
-		{
+        public async Task<IEnumerable<Book>> Search(string query)
+        {
             var books = _context.Books
-				.Include(b => b.Authors)
-				.Include(b => b.KeyWords)
-				.Include(b => b.Themes)
-				.AsQueryable();
+                .Include(b => b.Authors)
+                .Include(b => b.KeyWords)
+                .Include(b => b.Themes)
+                .AsQueryable();
 
             if (!string.IsNullOrEmpty(query))
             {
-                books = books.Where(b => b.Title.Contains(query) //||
-                                         //b.Authors.FirstOrDefault().FullName.Contains(query) //||
-                                         //b.KeyWords.Any(k => k.Word.Contains(query)) ||
-                                         //b.Themes.FirstOrDefault().DomainName.Contains(query)
-										 );
+                books = books.Where(b => b.Title.Contains(query)
+                                         //|| b.Authors.Any(a=>a.FullName!=null && a.FullName.Contains(query))
+                                         //|| b.KeyWords.Any(k => k.Word != null && k.Word.Contains(query))
+                                         //|| b.Themes.Any(t => t.DomainName != null && t.DomainName.Contains(query))
+                                         );
             }
 
             return await books.ToListAsync();
 
         }
 
-	}
+    }
 }
 
 
