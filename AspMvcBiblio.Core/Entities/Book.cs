@@ -21,7 +21,6 @@ namespace AspMvcBiblio.Entities
 		public IReadOnlyCollection<Theme> Themes => _themes.AsReadOnly();
 		public int CopiesNumber { get; set; }
 		public DateTime ServiceDate { get; set; }
-
 	}
 }
 

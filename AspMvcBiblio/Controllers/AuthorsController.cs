@@ -13,9 +13,9 @@ namespace AspMvcBiblio.Controllers
 {
     public class AuthorsController : Controller
     {
-        private IRepository<Author> _repository;
+        private IAuthorRepository _repository;
 
-        public AuthorsController(IRepository<Author> repository)
+        public AuthorsController(IAuthorRepository repository)
         {
             _repository = repository;
         }

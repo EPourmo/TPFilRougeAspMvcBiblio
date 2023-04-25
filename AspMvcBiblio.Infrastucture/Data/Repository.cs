@@ -46,7 +46,7 @@ namespace AspMvcBiblio.Data
         }
         public async Task Update(T entity)
         {
-            _context.Add(entity);
+            _context.Update(entity);
             await _context.SaveChangesAsync();
         }
 

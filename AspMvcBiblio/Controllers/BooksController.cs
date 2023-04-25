@@ -12,9 +12,9 @@ namespace AspMvcBiblio.Controllers
 {
     public class BooksController : Controller
     {
-        private IRepository<Book> _repository;
+        private IBookRepository _repository;
 
-        public BooksController(IRepository<Book> repository)
+        public BooksController(IBookRepository repository)
         {
             _repository = repository;
         }

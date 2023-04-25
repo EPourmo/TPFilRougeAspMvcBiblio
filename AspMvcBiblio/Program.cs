@@ -7,7 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<BiblioContext>(options=>options.UseSqlServer(builder.Configuration.GetConnectionString("localConnection")));
-builder.Services.AddSeedwork();
+//builder.Services.AddSeedwork();
+builder.Services.AddScoped<IBookRepository, BookRepository>();
+builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 
 var app = builder.Build();
 
