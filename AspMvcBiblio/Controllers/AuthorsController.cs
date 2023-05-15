@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AspMvcBiblio.Data;
 using AspMvcBiblio.Entities;
 using System.Reflection.Metadata;
+using System.Net.Http;
 
 namespace AspMvcBiblio.Controllers
 {
@@ -15,15 +16,22 @@ namespace AspMvcBiblio.Controllers
     {
         private IRepository<Author> _repository;
 
-        public AuthorsController(IRepository<Author> repository)
+        //Pour API
+        readonly IHttpClientFactory _httpClientFactory;
+        private HttpClient HttpClient => _httpClientFactory.CreateClient("API");
+
+        public AuthorsController(IRepository<Author> repository, IHttpClientFactory httpClientFactory)
         {
             _repository = repository;
+            _httpClientFactory = httpClientFactory;
         }
 
         // GET: Authors
         public async Task<IActionResult> Index()
         {
-              return View(await _repository.ListAll());
+            var authors = await HttpClient
+                .GetFromJsonAsync<IEnumerable<Author>>("api/Authors");
+            return View(authors);
         }
 
         // GET: Authors/Details/5
@@ -34,7 +42,8 @@ namespace AspMvcBiblio.Controllers
                 return NotFound();
             }
 
-            var author = await _repository.GetById(id.Value);
+            var author = await HttpClient.
+                GetFromJsonAsync<Author>($"api/Author/{id}");
 
             if (author == null)
             {

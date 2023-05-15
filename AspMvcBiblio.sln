@@ -4,12 +4,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspMvcBiblio", "AspMvcBiblio\AspMvcBiblio.csproj", "{AFF81192-4615-4939-83E3-5FD8620DF7FD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{792E80D1-46BD-4805-9070-902965251B3B} = {792E80D1-46BD-4805-9070-902965251B3B}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspMvcBiblio.Core", "AspMvcBiblio.Core\AspMvcBiblio.Core.csproj", "{56C1810B-FEE7-4E3E-B4AA-469E3B277B49}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspMvcBiblio.Infrastructure", "AspMvcBiblio.Infrastucture\AspMvcBiblio.Infrastructure.csproj", "{8AE4D5A5-0A92-4D0A-A76D-493F1F62EB29}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspMvcBiblio.Tests", "AspMvcBiblio.Tests\AspMvcBiblio.Tests.csproj", "{18BBB17C-01B1-4201-84C8-CB3393A8426F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspMvcBiblio.API", "AspMvcBiblio.API\AspMvcBiblio.API.csproj", "{792E80D1-46BD-4805-9070-902965251B3B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{56C1810B-FEE7-4E3E-B4AA-469E3B277B49} = {56C1810B-FEE7-4E3E-B4AA-469E3B277B49}
+		{8AE4D5A5-0A92-4D0A-A76D-493F1F62EB29} = {8AE4D5A5-0A92-4D0A-A76D-493F1F62EB29}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +42,10 @@ Global
 		{18BBB17C-01B1-4201-84C8-CB3393A8426F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18BBB17C-01B1-4201-84C8-CB3393A8426F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{18BBB17C-01B1-4201-84C8-CB3393A8426F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{792E80D1-46BD-4805-9070-902965251B3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{792E80D1-46BD-4805-9070-902965251B3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{792E80D1-46BD-4805-9070-902965251B3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{792E80D1-46BD-4805-9070-902965251B3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

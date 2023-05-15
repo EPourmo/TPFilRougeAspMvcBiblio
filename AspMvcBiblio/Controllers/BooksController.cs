@@ -107,6 +107,8 @@ namespace AspMvcBiblio.Controllers
                 return NotFound();
             }
 
+            
+
             ViewData["Authors"] = new SelectList(await _authorRepository.ListAll(), nameof(Author.Id), nameof(Author.FullName));
             ViewData["Themes"] = new SelectList(await _themeRepository.ListAll(), nameof(Theme.Id), nameof(Theme.DomainName));
             ViewData["Keywords"] = new SelectList(await _keywordRepository.ListAll(), nameof(Keyword.Id), nameof(Keyword.Word));
@@ -120,6 +122,7 @@ namespace AspMvcBiblio.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Book book)
         {
+
             if (id != book.Id)
             {
                 return NotFound();
@@ -129,6 +132,7 @@ namespace AspMvcBiblio.Controllers
             {
                 try
                 {
+ 
                     await _repository.Update(book);
 
                 }
@@ -145,6 +149,10 @@ namespace AspMvcBiblio.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["Authors"] = new SelectList(await _authorRepository.ListAll(), nameof(Author.Id), nameof(Author.FullName));
+            ViewData["Themes"] = new SelectList(await _themeRepository.ListAll(), nameof(Theme.Id), nameof(Theme.DomainName));
+            ViewData["Keywords"] = new SelectList(await _keywordRepository.ListAll(), nameof(Keyword.Id), nameof(Keyword.Word));
             return View(book);
         }
 
