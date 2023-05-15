@@ -16,5 +16,6 @@ namespace AspMvcBiblio.Entities
         readonly List<Book> _books = new List<Book>();
 		public IReadOnlyCollection<Book> Books => _books.AsReadOnly();
 
+
 	}
 }

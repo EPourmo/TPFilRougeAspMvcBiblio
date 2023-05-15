@@ -4,6 +4,7 @@
     ViewData["Title"] = "Edit";
 }
 
+
 <h1>Edit</h1>
 
 <h4>Book</h4>
@@ -22,11 +23,7 @@
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="CopiesNumber" class="control-label"></label>
-                <input asp-for="CopiesNumber" class="form-control" />
-                <span asp-validation-for="CopiesNumber" class="text-danger"></span>
-            </div>
+
             <div class="form-group">
                 <label asp-for="ServiceDate" class="control-label"></label>
                 <input asp-for="ServiceDate" class="form-control" />
@@ -36,9 +33,38 @@
 
             <div class="form-group">
                 <label asp-for="Authors" class="control-label"></label>
-                <input asp-for="Authors" class="form-control" />
-                <span asp-validation-for="Authors.FirstOrDefault().FirstName" class="text-danger"></span>
+                <input asp-for="Authors.FirstOrDefault().FullName" class="form-control" />
+                <span asp-validation-for="Authors" class="text-danger"></span>
+
             </div>
+
+            <div class="form-group">
+                <label asp-for="KeyWords" class="control-label"></label>
+                <input asp-for="KeyWords.FirstOrDefault().Word" class="form-control" />
+                <span asp-validation-for="KeyWords" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group">
+                <label asp-for="KeyWords" class="control-label"></label>
+                <select asp-for="KeyWords" class="form-control" asp-items="ViewBag.KeyWords"></select>
+                <span asp-validation-for="KeyWords" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group">
+                <label asp-for="Themes" class="control-label"></label>
+                <select asp-for="Themes" asp-items="@(ViewData["Themes"] as SelectList)" class="form-control">
+                </select>
+                <span asp-validation-for="Themes" class="text-danger"></span>
+            </div>
+
+            <div>
+                <input asp-for="Themes.FirstOrDefault().DomainName" class="form-control" />
+            </div>
+
+   
+
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

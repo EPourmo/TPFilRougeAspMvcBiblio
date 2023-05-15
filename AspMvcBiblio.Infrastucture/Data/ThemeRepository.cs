@@ -24,8 +24,6 @@ namespace AspMvcBiblio.Data
             .FirstOrDefaultAsync(b => b.Id == id);
         }
 
-
-
         public async Task<Theme?> GetSingle(Expression<Func<Theme, bool>> criteria)
         {
             return await _context.Themes
@@ -33,14 +31,10 @@ namespace AspMvcBiblio.Data
             .SingleOrDefaultAsync(criteria);
         }
 
-
-
         public async Task<IEnumerable<Theme>> ListAll()
         {
             return await _context.Themes.ToListAsync();
         }
-
-
 
         public async Task<IEnumerable<Theme>> List(Expression<Func<Theme, bool>> criteria)
         {
@@ -48,8 +42,6 @@ namespace AspMvcBiblio.Data
             .Include(a => a.Books)
             .Where(criteria).ToListAsync();
         }
-
-
 
         public async Task<Theme> Insert(Theme entity)
         {

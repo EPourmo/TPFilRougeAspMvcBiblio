@@ -17,7 +17,9 @@ namespace AspMvcBiblio.Data
         public DbSet<Author> Authors => Set<Author>();
         public DbSet<Theme> Themes => Set<Theme>();
         public DbSet<Keyword> KeyWords => Set<Keyword>();
-       
+
+        public DbSet<Reader> Readers => Set<Reader>();
+
 
         public BiblioContext(DbContextOptions<BiblioContext> options) : base(options)
         {
@@ -88,9 +90,32 @@ namespace AspMvcBiblio.Data
                     LastName = "Austen"
                 });
 
+            modelBuilder.Entity<Reader>().HasData(
+               new Reader
+               {
+                   Id = 1,
+                   FirstName = "Ermane",
+                   LastName = "Pourmohtasham",
+                   Email= "Ermane.Pourmohtasham@mail.com",
+                   Phone="0606060606"
+               },
+               new Reader
+               {
+                   Id = 2,
+                   FirstName = "Jean",
+                   LastName = "Valjean",
+                   Email = "Jean.Valjean@mail.com",
+                   Phone = "0676869616"
+               }
+               );
+
 
             modelBuilder.Entity<Keyword>().HasData(
-                new Keyword { Id = 1, Word = "mariage" });
+                new Keyword { Id = 1, Word = "mariage" },
+                new Keyword { Id = 2, Word = "meurtre" },
+                new Keyword { Id = 3, Word = "été" },
+                new Keyword { Id = 4, Word = "voyage" }
+                );
 
             modelBuilder.Entity<Book>().HasMany(b => b.Authors).WithMany(b => b.Books).UsingEntity(j =>
                 { j.HasData(
@@ -100,7 +125,26 @@ namespace AspMvcBiblio.Data
 
                     });
 				});
+            modelBuilder.Entity<Book>().HasMany(b => b.Themes).WithMany(b => b.Books).UsingEntity(j =>
+            {
+                j.HasData(
+            new[]
+            {
+                    new {BooksId = 1, ThemesId=1},
 
-		}
+                });
+            });
+
+            modelBuilder.Entity<Book>().HasMany(b => b.KeyWords).WithMany(b => b.Books).UsingEntity(j =>
+            {
+                j.HasData(
+            new[]
+            {
+                    new {BooksId = 1, KeyWordsId=2},
+
+                });
+            });
+
+        }
     }
 }

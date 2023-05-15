@@ -25,9 +25,23 @@
 
             <div class="form-group">
                 <label asp-for="AuthorId" class="control-label"></label>
-                <select asp-for="AuthorId" asp-items="@(ViewData["Authors"] as SelectList)"   class="form-control" >
+                <select multiple asp-for="AuthorId" asp-items="@(ViewData["Authors"] as SelectList)"   class="form-control" >
                 </select>
             </div>
+
+            <div class="form-group">
+                <label asp-for="ThemeId" class="control-label"></label>
+                <select asp-for="ThemeId" asp-items="@(ViewData["Themes"] as SelectList)" class="form-control">
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="KeywordsId" class="control-label"></label>
+                <select asp-for="KeywordsId" asp-items="@(ViewData["Keywords"] as SelectList)" class="form-control">
+                </select>
+            </div>
+
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

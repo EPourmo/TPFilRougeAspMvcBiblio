@@ -43,7 +43,6 @@ namespace AspMvcBiblio.Data
         }
 
 
-
         public async Task<IEnumerable<Book>> ListAll()
         {
             return await _context.Books.Include(a => a.Authors).Include(b => b.KeyWords)
@@ -73,8 +72,6 @@ namespace AspMvcBiblio.Data
             _context.Books.Update(entity);
             await _context.SaveChangesAsync();
         }
-
-
 
         public async Task Delete(Book entity)
         {

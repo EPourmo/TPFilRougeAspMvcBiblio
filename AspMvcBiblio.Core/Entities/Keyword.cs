@@ -11,5 +11,8 @@ namespace AspMvcBiblio.Entities
 	{
 		public string Word { get; set; } = null!;
 
-	}
+        readonly List<Book> _books = new List<Book>();
+        public IReadOnlyCollection<Book> Books => _books.AsReadOnly();
+
+    }
 }

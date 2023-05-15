@@ -4,6 +4,7 @@ using AspMvcBiblio.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AspMvcBiblio.Data.Migrations
 {
     [DbContext(typeof(BiblioContext))]
-    partial class BiblioContextModelSnapshot : ModelSnapshot
+    [Migration("20230515090650_BibliothequeReaderMVC2")]
+    partial class BibliothequeReaderMVC2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -99,12 +101,17 @@ namespace AspMvcBiblio.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int?>("BookId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Word")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BookId");
 
                     b.ToTable("KeyWords");
 
@@ -113,21 +120,6 @@ namespace AspMvcBiblio.Data.Migrations
                         {
                             Id = 1,
                             Word = "mariage"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Word = "meurtre"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Word = "été"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Word = "voyage"
                         });
                 });
 
@@ -260,28 +252,6 @@ namespace AspMvcBiblio.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("BookKeyword", b =>
-                {
-                    b.Property<int>("BooksId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("KeyWordsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BooksId", "KeyWordsId");
-
-                    b.HasIndex("KeyWordsId");
-
-                    b.ToTable("BookKeyword");
-
-                    b.HasData(
-                        new
-                        {
-                            BooksId = 1,
-                            KeyWordsId = 2
-                        });
-                });
-
             modelBuilder.Entity("BookTheme", b =>
                 {
                     b.Property<int>("BooksId")
@@ -304,6 +274,13 @@ namespace AspMvcBiblio.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("AspMvcBiblio.Entities.Keyword", b =>
+                {
+                    b.HasOne("AspMvcBiblio.Entities.Book", null)
+                        .WithMany("KeyWords")
+                        .HasForeignKey("BookId");
+                });
+
             modelBuilder.Entity("AuthorBook", b =>
                 {
                     b.HasOne("AspMvcBiblio.Entities.Author", null)
@@ -315,21 +292,6 @@ namespace AspMvcBiblio.Data.Migrations
                     b.HasOne("AspMvcBiblio.Entities.Book", null)
                         .WithMany()
                         .HasForeignKey("BooksId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("BookKeyword", b =>
-                {
-                    b.HasOne("AspMvcBiblio.Entities.Book", null)
-                        .WithMany()
-                        .HasForeignKey("BooksId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AspMvcBiblio.Entities.Keyword", null)
-                        .WithMany()
-                        .HasForeignKey("KeyWordsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -347,6 +309,11 @@ namespace AspMvcBiblio.Data.Migrations
                         .HasForeignKey("ThemesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("AspMvcBiblio.Entities.Book", b =>
+                {
+                    b.Navigation("KeyWords");
                 });
 #pragma warning restore 612, 618
         }

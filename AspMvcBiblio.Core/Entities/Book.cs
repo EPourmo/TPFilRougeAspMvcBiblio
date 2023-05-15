@@ -20,6 +20,8 @@ namespace AspMvcBiblio.Entities
 
 		readonly List<Theme> _themes = new List<Theme>();
 		public ICollection<Theme> Themes => _themes;
+
+		//TODO
 		public int CopiesNumber { get; set; }
 		public DateTime ServiceDate { get; set; }
 

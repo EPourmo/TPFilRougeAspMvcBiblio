@@ -15,11 +15,15 @@ namespace AspMvcBiblio.Controllers
     {
         private readonly IBookRepository _repository;
         private readonly IAuthorRepository _authorRepository;
+        private readonly IThemeRepository _themeRepository;
+        private readonly IKeywordRepository _keywordRepository;
 
-        public BooksController(IBookRepository repository, IAuthorRepository authorRepository)
+        public BooksController(IBookRepository repository, IAuthorRepository authorRepository, IThemeRepository themeRepository, IKeywordRepository keywordRepository)
         {
             _repository = repository;
             _authorRepository = authorRepository;
+            _themeRepository = themeRepository;
+            _keywordRepository = keywordRepository;
         }
 
         // GET: Books
@@ -50,6 +54,8 @@ namespace AspMvcBiblio.Controllers
         public async Task<IActionResult> Create()
         {
             ViewData["Authors"] = new SelectList(await _authorRepository.ListAll(), nameof(Author.Id), nameof(Author.FullName));
+            ViewData["Themes"] = new SelectList(await _themeRepository.ListAll(), nameof(Theme.Id), nameof(Theme.DomainName));
+            ViewData["Keywords"] = new SelectList(await _keywordRepository.ListAll(), nameof(Keyword.Id), nameof(Keyword.Word));
             return View();
         }
 
@@ -64,7 +70,10 @@ namespace AspMvcBiblio.Controllers
             if (ModelState.IsValid)
             {
                 var author = await _authorRepository.GetById(model.AuthorId);
-                if (author == null)
+                var theme = await _themeRepository.GetById(model.ThemeId);
+                var keyword = await _keywordRepository.GetById(model.KeywordsId);
+
+                if (author == null )
                 { return NotFound(); }
 
                 var newbook = new Book()
@@ -74,6 +83,8 @@ namespace AspMvcBiblio.Controllers
                 };
 
                 newbook.Authors.Add(author);
+                newbook.Themes.Add(theme);
+                newbook.KeyWords.Add(keyword);
 
                 await _repository.Insert(newbook);
 
@@ -95,6 +106,10 @@ namespace AspMvcBiblio.Controllers
             {
                 return NotFound();
             }
+
+            ViewData["Authors"] = new SelectList(await _authorRepository.ListAll(), nameof(Author.Id), nameof(Author.FullName));
+            ViewData["Themes"] = new SelectList(await _themeRepository.ListAll(), nameof(Theme.Id), nameof(Theme.DomainName));
+            ViewData["Keywords"] = new SelectList(await _keywordRepository.ListAll(), nameof(Keyword.Id), nameof(Keyword.Word));
             return View(book);
         }
 

@@ -2,7 +2,7 @@
 
 namespace AspMvcBiblio.Models
 {
-    public class BookCreateModel
+    public class BookEditModel
     {
         [Required]
         [StringLength(20)]
@@ -10,13 +10,15 @@ namespace AspMvcBiblio.Models
 
         [Required]
         [StringLength(100)]
-        public string? Title { get; set; } 
+        public string? Title { get; set; }
 
         public int AuthorId { get; set; }
 
         public int ThemeId { get; set; }
 
         public int KeywordsId { get; set; }
+
+        public DateTime ServiceDate { get; set; }
 
 
     }
