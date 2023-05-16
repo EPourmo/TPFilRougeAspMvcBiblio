@@ -7,36 +7,40 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AspMvcBiblio.Data;
 using AspMvcBiblio.Entities;
+using System.Net.Http;
 
 namespace AspMvcBiblio.Controllers
 {
     public class ReadersController : Controller
     {
-        private readonly BiblioContext _context;
 
-        public ReadersController(BiblioContext context)
+        readonly IHttpClientFactory _httpClientFactory;
+        private HttpClient HttpClient => _httpClientFactory.CreateClient("API");
+
+        public ReadersController(IHttpClientFactory httpClientFactory)
         {
-            _context = context;
+            _httpClientFactory = httpClientFactory;
         }
 
         // GET: Readers
         public async Task<IActionResult> Index()
         {
-              return _context.Readers != null ? 
-                          View(await _context.Readers.ToListAsync()) :
-                          Problem("Entity set 'BiblioContext.Readers'  is null.");
+            var readers = await HttpClient
+                .GetFromJsonAsync<IEnumerable<Reader>>("api/Readers");
+            return View(readers);
         }
 
         // GET: Readers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Readers == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var reader = await _context.Readers
-                .FirstOrDefaultAsync(m => m.Id == id);
+
+            var reader = await HttpClient.
+                    GetFromJsonAsync<Reader>($"api/Readers/{id}");
             if (reader == null)
             {
                 return NotFound();
@@ -58,11 +62,15 @@ namespace AspMvcBiblio.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("LastName,FirstName,Email,Phone,Id")] Reader reader)
         {
+
             if (ModelState.IsValid)
             {
-                _context.Add(reader);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var response = await HttpClient.
+                    PostAsJsonAsync("api/Readers", reader);
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
             }
             return View(reader);
         }
@@ -70,12 +78,13 @@ namespace AspMvcBiblio.Controllers
         // GET: Readers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Readers == null)
+            if (id == null)
             {
                 return NotFound();
             }
+            var reader = await HttpClient.
+              GetFromJsonAsync<Reader>($"api/Readers/{id}");
 
-            var reader = await _context.Readers.FindAsync(id);
             if (reader == null)
             {
                 return NotFound();
@@ -88,46 +97,35 @@ namespace AspMvcBiblio.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("LastName,FirstName,Email,Phone,Id")] Reader reader)
+        public async Task<IActionResult> Edit(int id, Reader reader)
         {
             if (id != reader.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            var response = await HttpClient.
+                  PutAsJsonAsync($"api/Readers/{id}", reader);
+            if (response.IsSuccessStatusCode)
             {
-                try
-                {
-                    _context.Update(reader);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ReaderExists(reader.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
                 return RedirectToAction(nameof(Index));
             }
             return View(reader);
         }
 
+
+
         // GET: Readers/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Readers == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var reader = await _context.Readers
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var reader = await HttpClient
+                .GetFromJsonAsync<Reader>($"api/Readers/{id}");
+
             if (reader == null)
             {
                 return NotFound();
@@ -141,23 +139,20 @@ namespace AspMvcBiblio.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Readers == null)
+    
+            var response = await HttpClient.
+              DeleteAsync($"api/Readers/{id}");
+            if (response.IsSuccessStatusCode)
             {
-                return Problem("Entity set 'BiblioContext.Readers'  is null.");
+                return RedirectToAction(nameof(Index));
             }
-            var reader = await _context.Readers.FindAsync(id);
-            if (reader != null)
-            {
-                _context.Readers.Remove(reader);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return NotFound();
         }
 
-        private bool ReaderExists(int id)
-        {
-          return (_context.Readers?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
+        //private bool ReaderExists(int id)
+        //{
+        //    return (_context.Readers?.Any(e => e.Id == id)).GetValueOrDefault();
+        //}
     }
 }

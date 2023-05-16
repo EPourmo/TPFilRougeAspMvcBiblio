@@ -12,31 +12,34 @@ namespace AspMvcBiblio.Controllers
 {
     public class ThemesController : Controller
     {
-        private readonly BiblioContext _context;
+        readonly IHttpClientFactory _httpClientFactory;
+        private HttpClient HttpClient => _httpClientFactory.CreateClient("API");
 
-        public ThemesController(BiblioContext context)
+        public ThemesController(IHttpClientFactory httpClientFactory)
         {
-            _context = context;
+            _httpClientFactory = httpClientFactory;
         }
 
         // GET: Themes
         public async Task<IActionResult> Index()
         {
-              return _context.Themes != null ? 
-                          View(await _context.Themes.ToListAsync()) :
-                          Problem("Entity set 'BiblioContext.Themes'  is null.");
+            var themes = await HttpClient
+              .GetFromJsonAsync<IEnumerable<Theme>>("api/Themes");
+            return View(themes);
         }
 
         // GET: Themes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Themes == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var theme = await _context.Themes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var theme = await HttpClient.
+               GetFromJsonAsync<Theme>($"api/Themes/{id}");
+
+
             if (theme == null)
             {
                 return NotFound();
@@ -60,9 +63,14 @@ namespace AspMvcBiblio.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(theme);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                var response = await HttpClient.
+                    PostAsJsonAsync("api/Themes", theme);
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(theme);
             }
             return View(theme);
         }
@@ -70,12 +78,15 @@ namespace AspMvcBiblio.Controllers
         // GET: Themes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Themes == null)
+
+
+            if (id == null)
             {
                 return NotFound();
             }
+            var theme = await HttpClient.
+               GetFromJsonAsync<Theme>($"api/Themes/{id}");
 
-            var theme = await _context.Themes.FindAsync(id);
             if (theme == null)
             {
                 return NotFound();
@@ -90,29 +101,10 @@ namespace AspMvcBiblio.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("DomainName,Description,Id")] Theme theme)
         {
-            if (id != theme.Id)
+            var response = await HttpClient.
+                      PutAsJsonAsync($"api/Themes/{id}", theme);
+            if (response.IsSuccessStatusCode)
             {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(theme);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ThemeExists(theme.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
                 return RedirectToAction(nameof(Index));
             }
             return View(theme);
@@ -121,13 +113,13 @@ namespace AspMvcBiblio.Controllers
         // GET: Themes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Themes == null)
+            if (id == null )
             {
                 return NotFound();
             }
+            var theme = await HttpClient
+               .GetFromJsonAsync<Theme>($"api/Themes/{id}");
 
-            var theme = await _context.Themes
-                .FirstOrDefaultAsync(m => m.Id == id);
             if (theme == null)
             {
                 return NotFound();
@@ -141,23 +133,19 @@ namespace AspMvcBiblio.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Themes == null)
+            var response = await HttpClient.
+                DeleteAsync($"api/Themes/{id}");
+            if (response.IsSuccessStatusCode)
             {
-                return Problem("Entity set 'BiblioContext.Themes'  is null.");
+                return RedirectToAction(nameof(Index));
             }
-            var theme = await _context.Themes.FindAsync(id);
-            if (theme != null)
-            {
-                _context.Themes.Remove(theme);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return NotFound();
         }
 
-        private bool ThemeExists(int id)
-        {
-          return (_context.Themes?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
+        //private bool ThemeExists(int id)
+        //{
+        //    return (_context.Themes?.Any(e => e.Id == id)).GetValueOrDefault();
+        //}
     }
 }

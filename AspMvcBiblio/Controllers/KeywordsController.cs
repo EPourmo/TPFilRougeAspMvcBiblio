@@ -7,36 +7,38 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AspMvcBiblio.Data;
 using AspMvcBiblio.Entities;
+using System.Net.Http;
 
 namespace AspMvcBiblio.Controllers
 {
     public class KeywordsController : Controller
     {
-        private readonly BiblioContext _context;
-
-        public KeywordsController(BiblioContext context)
+        readonly IHttpClientFactory _httpClientFactory;
+        private HttpClient HttpClient => _httpClientFactory.CreateClient("API");
+        public KeywordsController(IHttpClientFactory httpClientFactory)
         {
-            _context = context;
+            _httpClientFactory = httpClientFactory;
         }
 
         // GET: Keywords
         public async Task<IActionResult> Index()
         {
-              return _context.KeyWords != null ? 
-                          View(await _context.KeyWords.ToListAsync()) :
-                          Problem("Entity set 'BiblioContext.KeyWords'  is null.");
+            var keywords = await HttpClient
+               .GetFromJsonAsync<IEnumerable<Keyword>>("api/Keywords");
+            return View(keywords);
         }
 
         // GET: Keywords/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.KeyWords == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var keyword = await _context.KeyWords
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var keyword = await HttpClient.
+                GetFromJsonAsync<Keyword>($"api/Keywords/{id}");
+
             if (keyword == null)
             {
                 return NotFound();
@@ -60,9 +62,12 @@ namespace AspMvcBiblio.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(keyword);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var response = await HttpClient.
+                    PostAsJsonAsync("api/Keywords", keyword);
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
             }
             return View(keyword);
         }
@@ -70,12 +75,13 @@ namespace AspMvcBiblio.Controllers
         // GET: Keywords/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.KeyWords == null)
+            if (id == null)
             {
                 return NotFound();
             }
+            var keyword = await HttpClient.
+               GetFromJsonAsync<Keyword>($"api/Keywords/{id}");
 
-            var keyword = await _context.KeyWords.FindAsync(id);
             if (keyword == null)
             {
                 return NotFound();
@@ -90,29 +96,10 @@ namespace AspMvcBiblio.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Word,Id")] Keyword keyword)
         {
-            if (id != keyword.Id)
+            var response = await HttpClient.
+                      PutAsJsonAsync($"api/Keywords/{id}", keyword);
+            if (response.IsSuccessStatusCode)
             {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(keyword);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!KeywordExists(keyword.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
                 return RedirectToAction(nameof(Index));
             }
             return View(keyword);
@@ -121,13 +108,13 @@ namespace AspMvcBiblio.Controllers
         // GET: Keywords/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.KeyWords == null)
+            if (id == null)
             {
                 return NotFound();
             }
+            var keyword = await HttpClient
+                .GetFromJsonAsync<Keyword>($"api/Keywords/{id}");
 
-            var keyword = await _context.KeyWords
-                .FirstOrDefaultAsync(m => m.Id == id);
             if (keyword == null)
             {
                 return NotFound();
@@ -141,23 +128,18 @@ namespace AspMvcBiblio.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.KeyWords == null)
+            var response = await HttpClient.
+                DeleteAsync($"api/Keywords/{id}");
+            if (response.IsSuccessStatusCode)
             {
-                return Problem("Entity set 'BiblioContext.KeyWords'  is null.");
+                return RedirectToAction(nameof(Index));
             }
-            var keyword = await _context.KeyWords.FindAsync(id);
-            if (keyword != null)
-            {
-                _context.KeyWords.Remove(keyword);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return NotFound();
         }
 
-        private bool KeywordExists(int id)
-        {
-          return (_context.KeyWords?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
+        //private bool KeywordExists(int id)
+        //{
+        //  return (_context.KeyWords?.Any(e => e.Id == id)).GetValueOrDefault();
+        //}
     }
 }

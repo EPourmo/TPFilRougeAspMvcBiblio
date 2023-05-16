@@ -8,28 +8,29 @@ using Microsoft.EntityFrameworkCore;
 using AspMvcBiblio.Data;
 using AspMvcBiblio.Entities;
 using AspMvcBiblio.Models;
+using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
+using Newtonsoft.Json;
 
 namespace AspMvcBiblio.Controllers
 {
     public class BooksController : Controller
     {
-        private readonly IBookRepository _repository;
-        private readonly IAuthorRepository _authorRepository;
-        private readonly IThemeRepository _themeRepository;
-        private readonly IKeywordRepository _keywordRepository;
 
-        public BooksController(IBookRepository repository, IAuthorRepository authorRepository, IThemeRepository themeRepository, IKeywordRepository keywordRepository)
+        //Pour API
+        readonly IHttpClientFactory _httpClientFactory;
+        private HttpClient HttpClient => _httpClientFactory.CreateClient("API");
+
+        public BooksController(IHttpClientFactory httpClientFactory)
         {
-            _repository = repository;
-            _authorRepository = authorRepository;
-            _themeRepository = themeRepository;
-            _keywordRepository = keywordRepository;
+            _httpClientFactory = httpClientFactory;
         }
 
         // GET: Books
         public async Task<IActionResult> Index()
         {
-            return View(await _repository.ListAll());
+            var book = await HttpClient
+                .GetFromJsonAsync<IEnumerable<Book>>("api/Books");
+            return View(book);
         }
 
         // GET: Books/Details/5
@@ -40,7 +41,8 @@ namespace AspMvcBiblio.Controllers
                 return NotFound();
             }
 
-            var book = await _repository.GetById(id.Value);
+            var book = await HttpClient.
+                GetFromJsonAsync<Book>($"api/Books/{id}");
 
             if (book == null)
             {
@@ -53,9 +55,11 @@ namespace AspMvcBiblio.Controllers
         // GET: Books/Create
         public async Task<IActionResult> Create()
         {
-            ViewData["Authors"] = new SelectList(await _authorRepository.ListAll(), nameof(Author.Id), nameof(Author.FullName));
-            ViewData["Themes"] = new SelectList(await _themeRepository.ListAll(), nameof(Theme.Id), nameof(Theme.DomainName));
-            ViewData["Keywords"] = new SelectList(await _keywordRepository.ListAll(), nameof(Keyword.Id), nameof(Keyword.Word));
+            ViewData["Authors"] = await HttpClient.GetFromJsonAsync<IEnumerable<Author>>("api/Authors");
+            ViewData["Themes"] = await HttpClient.GetFromJsonAsync<IEnumerable<Theme>>("api/Themes");
+            ViewData["Keywords"] = await HttpClient.GetFromJsonAsync<IEnumerable<Keyword>>("api/Keywords");
+
+
             return View();
         }
 
@@ -69,12 +73,9 @@ namespace AspMvcBiblio.Controllers
 
             if (ModelState.IsValid)
             {
-                var author = await _authorRepository.GetById(model.AuthorId);
-                var theme = await _themeRepository.GetById(model.ThemeId);
-                var keyword = await _keywordRepository.GetById(model.KeywordsId);
-
-                if (author == null )
-                { return NotFound(); }
+                var author = await HttpClient.GetFromJsonAsync<Author>($"api/Authors/{model.AuthorId}");
+                var theme = await HttpClient.GetFromJsonAsync<Theme>($"api/Themes/{model.ThemeId}");
+                var keyword = await HttpClient.GetFromJsonAsync<Keyword>($"api/Keywords/{model.KeywordsId}");
 
                 var newbook = new Book()
                 {
@@ -86,9 +87,13 @@ namespace AspMvcBiblio.Controllers
                 newbook.Themes.Add(theme);
                 newbook.KeyWords.Add(keyword);
 
-                await _repository.Insert(newbook);
+                var response = await HttpClient.
+                    PostAsJsonAsync("api/Books", newbook);
 
-                return RedirectToAction(nameof(Index));
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
             }
             return View(model);
         }
@@ -101,17 +106,18 @@ namespace AspMvcBiblio.Controllers
                 return NotFound();
             }
 
-            var book = await _repository.GetById(id.Value);
+            var book = await HttpClient.
+                    GetFromJsonAsync<Book>($"api/Books/{id}");
+
             if (book == null)
             {
                 return NotFound();
             }
 
-            
 
-            ViewData["Authors"] = new SelectList(await _authorRepository.ListAll(), nameof(Author.Id), nameof(Author.FullName));
-            ViewData["Themes"] = new SelectList(await _themeRepository.ListAll(), nameof(Theme.Id), nameof(Theme.DomainName));
-            ViewData["Keywords"] = new SelectList(await _keywordRepository.ListAll(), nameof(Keyword.Id), nameof(Keyword.Word));
+            ViewData["Authors"] = await HttpClient.GetFromJsonAsync<Author>($"api/Authors/{book.Authors}");
+            ViewData["Themes"] = await HttpClient.GetFromJsonAsync<Theme>($"api/Themes/{book.Themes}");
+            ViewData["Keywords"] = await HttpClient.GetFromJsonAsync<Keyword>($"api/Keywords/{book.KeyWords}");
             return View(book);
         }
 
@@ -132,8 +138,14 @@ namespace AspMvcBiblio.Controllers
             {
                 try
                 {
- 
-                    await _repository.Update(book);
+
+                    var response = await HttpClient.
+                    PutAsJsonAsync($"api/Books/{id}", book);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                    return View(book);
 
                 }
                 catch (DbUpdateConcurrencyException)
@@ -147,12 +159,20 @@ namespace AspMvcBiblio.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
             }
 
-            ViewData["Authors"] = new SelectList(await _authorRepository.ListAll(), nameof(Author.Id), nameof(Author.FullName));
-            ViewData["Themes"] = new SelectList(await _themeRepository.ListAll(), nameof(Theme.Id), nameof(Theme.DomainName));
-            ViewData["Keywords"] = new SelectList(await _keywordRepository.ListAll(), nameof(Keyword.Id), nameof(Keyword.Word));
+            //ViewData["Authors"] = new SelectList(await _authorRepository.ListAll(), nameof(Author.Id), nameof(Author.FullName));
+            //ViewData["Themes"] = new SelectList(await _themeRepository.ListAll(), nameof(Theme.Id), nameof(Theme.DomainName));
+            //ViewData["Keywords"] = new SelectList(await _keywordRepository.ListAll(), nameof(Keyword.Id), nameof(Keyword.Word));
+
+
+            ViewData["Authors"] = await HttpClient.GetFromJsonAsync<Author>($"api/Authors/{book.Authors}");
+            ViewData["Themes"] = await HttpClient.GetFromJsonAsync<Theme>($"api/Themes/{book.Themes}");
+            ViewData["Keywords"] = await HttpClient.GetFromJsonAsync<Keyword>($"api/Keywords/{book.KeyWords}");
+
+
+
             return View(book);
         }
 
@@ -164,7 +184,9 @@ namespace AspMvcBiblio.Controllers
                 return NotFound();
             }
 
-            var book = await _repository.GetById(id.Value);
+
+            var book = await HttpClient
+                    .GetFromJsonAsync<Book>($"api/Books/{id}");
 
             if (book == null)
             {
@@ -179,22 +201,47 @@ namespace AspMvcBiblio.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var book = await _repository.GetById(id);
+            var response = await HttpClient.
+                      DeleteAsync($"api/Books/{id}");
 
-            await _repository.Delete(book);
-            return RedirectToAction(nameof(Index));
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            return NotFound();
         }
+
 
         private async Task<bool> BookExists(int id)
         {
-            return await _repository.GetById(id) != null;
+            using (var client = new HttpClient())
+            {
+                var response = await client.GetAsync($"api/books/{id}");
+                return response.IsSuccessStatusCode;
+            }
         }
 
         public async Task<IActionResult> Search(string query)
         {
-            var books = await _repository.Search(query);
-            return View("Index", books);
+            using (var client = new HttpClient())
+            {
+                var response = await client.GetAsync($"api/books/search?query={query}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var books = JsonConvert.DeserializeObject<IEnumerable<Book>>(content);
+                    return View("Index", books);
+                }
+                else
+                {
+                    // Handle the error response
+                    return View("Error");
+                }
+            }
         }
+
+
 
     }
 }
