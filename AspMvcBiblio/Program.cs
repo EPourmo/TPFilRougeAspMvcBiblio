@@ -6,8 +6,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<BiblioContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("localConnection")));
-builder.Services.AddSeedwork();
+
+var baseAdress = "https://localhost:7235/";
+builder.Services.AddHttpClient(
+    "API",
+    o =>
+    {
+        o.BaseAddress = new Uri(baseAdress);
+    });
 
 
 var app = builder.Build();
