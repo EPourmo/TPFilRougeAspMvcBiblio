@@ -10,6 +10,7 @@ using AspMvcBiblio.Entities;
 using AspMvcBiblio.Models;
 using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 using Newtonsoft.Json;
+using SQLitePCL;
 
 namespace AspMvcBiblio.Controllers
 {
@@ -28,9 +29,13 @@ namespace AspMvcBiblio.Controllers
         // GET: Books
         public async Task<IActionResult> Index()
         {
-            var book = await HttpClient
-                .GetFromJsonAsync<IEnumerable<Book>>("api/Books");
-            return View(book);
+			HttpResponseMessage response = await HttpClient.GetAsync("https://localhost:7235/api/Books");
+			response.EnsureSuccessStatusCode();
+			string responseBody = await response.Content.ReadAsStringAsync();
+            var book = JsonConvert.DeserializeObject<IEnumerable<Book>>(responseBody);
+
+
+			return View(book);
         }
 
         // GET: Books/Details/5
@@ -73,7 +78,7 @@ namespace AspMvcBiblio.Controllers
 
             if (ModelState.IsValid)
             {
-                var author = await HttpClient.GetFromJsonAsync<Author>($"api/Authors/{model.AuthorId}");
+                var author = await HttpClient.GetFromJsonAsync<Author>($"api/Books/{model.AuthorId}");
                 var theme = await HttpClient.GetFromJsonAsync<Theme>($"api/Themes/{model.ThemeId}");
                 var keyword = await HttpClient.GetFromJsonAsync<Keyword>($"api/Keywords/{model.KeywordsId}");
 
@@ -167,9 +172,9 @@ namespace AspMvcBiblio.Controllers
             //ViewData["Keywords"] = new SelectList(await _keywordRepository.ListAll(), nameof(Keyword.Id), nameof(Keyword.Word));
 
 
-            ViewData["Authors"] = await HttpClient.GetFromJsonAsync<Author>($"api/Authors/{book.Authors}");
-            ViewData["Themes"] = await HttpClient.GetFromJsonAsync<Theme>($"api/Themes/{book.Themes}");
-            ViewData["Keywords"] = await HttpClient.GetFromJsonAsync<Keyword>($"api/Keywords/{book.KeyWords}");
+            ViewData["Authors"] = await HttpClient.GetFromJsonAsync<Author>($"api/Books/{id}/Authors/{book.Authors}");
+            ViewData["Themes"] = await HttpClient.GetFromJsonAsync<Theme>($"api/Books/{id}/Themes/{book.Themes}");
+            ViewData["Keywords"] = await HttpClient.GetFromJsonAsync<Keyword>($"api/Books/{id}/Keywords/{book.KeyWords}");
 
 
 
