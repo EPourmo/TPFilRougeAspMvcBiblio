@@ -29,7 +29,7 @@ namespace AspMvcBiblio.Controllers
           {
               return NotFound();
           }
-            return await _context.Books.Include(b => b.Authors).Include(b=>b.KeyWords).ToListAsync();
+            return await _context.Books.Include(b => b.Authors).Include(b=>b.KeyWords).Include(b=>b.Themes).ToListAsync();
         }
 
         // GET: api/Books/5
@@ -44,7 +44,8 @@ namespace AspMvcBiblio.Controllers
             var book = await _context.Books
                 .Include(b => b.Authors)
                 .Include(b => b.KeyWords)
-                .FirstOrDefaultAsync(b => b.Id == id);
+				.Include(b => b.Themes)
+				.FirstOrDefaultAsync(b => b.Id == id);
 
 
             if (book == null)

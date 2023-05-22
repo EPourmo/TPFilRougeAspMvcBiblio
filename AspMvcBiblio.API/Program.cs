@@ -11,29 +11,40 @@ builder.Services.AddControllers()
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddDbContext<BiblioContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("localConnection")));
-
-builder.Services.AddCors(options => options.AddPolicy(name: "AuteurOrigins",
-    policy =>
-    {
-        policy.WithOrigins("http://localhost:7195").AllowAnyMethod().AllowAnyHeader();
-    }));
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options => options.AddDefaultPolicy(builder=> { builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(); }));
+
+//http://localhost:7195//
+
+
+if (builder.Environment.IsDevelopment())
+{
+	builder.Services.AddDbContext<BiblioContext>(options =>
+	options.UseSqlServer(builder.Configuration.GetConnectionString("localConnection")));
+}
+else if (builder.Environment.IsStaging())
+{
+	builder.Services.AddDbContext<BiblioContext>(options =>
+	options.UseSqlServer(builder.Configuration.GetConnectionString("devOpsConnection")));
+}
+else
+{
+	builder.Services.AddDbContext<BiblioContext>(options =>
+	options.UseSqlServer(builder.Configuration.GetConnectionString("azureConnection")));
+
+}
+
 var app = builder.Build();
+app.UseCors();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    using (var scope = app.Services.CreateAsyncScope())
-    {
-        scope.ServiceProvider.GetRequiredService<BiblioContext>()
-            .Database.EnsureCreated();
-    }
-    app.UseSwagger();
-    app.UseSwaggerUI();
+	app.UseSwagger();
+	app.UseSwaggerUI();
 }
-app.UseCors("AuteurOrigins");
 
 app.UseHttpsRedirection();
 
@@ -42,3 +53,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }

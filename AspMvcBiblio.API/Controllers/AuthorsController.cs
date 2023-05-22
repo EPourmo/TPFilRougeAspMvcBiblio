@@ -23,6 +23,7 @@ namespace AspMvcBiblio.Controllers
 
         // GET: api/Authors
         [HttpGet]
+        
         public async Task<ActionResult<IEnumerable<Author>>> GetAuthors()
         {
           if (_context.Authors == null)

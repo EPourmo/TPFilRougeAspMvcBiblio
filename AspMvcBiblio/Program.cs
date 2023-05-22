@@ -8,6 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 var baseAdress = "https://localhost:7235/";
+
+
+if (builder.Environment.IsProduction())
+{ baseAdress = "https://tpfilrougebiblioapi.azurewebsites.net/"; }
+
 builder.Services.AddHttpClient(
     "API",
     o =>

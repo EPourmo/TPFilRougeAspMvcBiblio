@@ -60,12 +60,12 @@ namespace AspMvcBiblio.Controllers
         // GET: Books/Create
         public async Task<IActionResult> Create()
         {
-            ViewData["Authors"] = await HttpClient.GetFromJsonAsync<IEnumerable<Author>>("api/Authors");
-            ViewData["Themes"] = await HttpClient.GetFromJsonAsync<IEnumerable<Theme>>("api/Themes");
-            ViewData["Keywords"] = await HttpClient.GetFromJsonAsync<IEnumerable<Keyword>>("api/Keywords");
+			ViewData["Authors"] = new SelectList(await HttpClient.GetFromJsonAsync<IEnumerable<Author>>("api/Authors"), nameof(Author.Id), nameof(Author.FullName));
+			ViewData["Themes"] = new SelectList(await HttpClient.GetFromJsonAsync<IEnumerable<Theme>>("api/Themes"), nameof(Theme.Id), nameof(Theme.DomainName));
+			ViewData["Keywords"] = new SelectList(await HttpClient.GetFromJsonAsync<IEnumerable<Keyword>>("api/Keywords"), nameof(Keyword.Id), nameof(Keyword.Word));
 
 
-            return View();
+			return View();
         }
 
         // POST: Books/Create
@@ -119,11 +119,11 @@ namespace AspMvcBiblio.Controllers
                 return NotFound();
             }
 
+			ViewData["Authors"] = new SelectList(await HttpClient.GetFromJsonAsync<IEnumerable<Author>>("api/Authors"), nameof(Author.Id), nameof(Author.FullName));
+			ViewData["Themes"] = new SelectList(await HttpClient.GetFromJsonAsync<IEnumerable<Theme>>("api/Themes"), nameof(Theme.Id), nameof(Theme.DomainName));
+			ViewData["Keywords"] = new SelectList(await HttpClient.GetFromJsonAsync<IEnumerable<Keyword>>("api/Keywords"), nameof(Keyword.Id), nameof(Keyword.Word));
 
-            ViewData["Authors"] = await HttpClient.GetFromJsonAsync<Author>($"api/Authors/{book.Authors}");
-            ViewData["Themes"] = await HttpClient.GetFromJsonAsync<Theme>($"api/Themes/{book.Themes}");
-            ViewData["Keywords"] = await HttpClient.GetFromJsonAsync<Keyword>($"api/Keywords/{book.KeyWords}");
-            return View(book);
+			return View(book);
         }
 
         // POST: Books/Edit/5
